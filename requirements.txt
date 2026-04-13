@@ -1,0 +1,9 @@
+yfinance
+pandas
+numpy
+requests
+pandas-datareader
+fredapi
+anthropic
+beautifulsoup4
+lxml
