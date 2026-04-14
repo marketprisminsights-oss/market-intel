@@ -1,9 +1,9 @@
 name: Daily Market Analysis
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 12 * * 1-5'
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -12,18 +12,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -37,22 +34,17 @@ jobs:
           mkdir -p docs
           python cycle_analysis.py --no-browser --outdir ./docs
 
-      - name: Rename output to index.html
+      - name: Rename to index.html
         run: |
           cd docs
-          GENERATED=$(ls cycle_analysis_*.html 2>/dev/null | head -1)
-          if [ -n "$GENERATED" ]; then
-            mv "$GENERATED" index.html
-            echo "✓ Renamed $GENERATED to index.html"
-          else
-            echo "✗ No output file found"
-            exit 1
-          fi
-     - name: Commit and push report
+          ls *.html
+          mv $(ls cycle_analysis_*.html | head -1) index.html
+
+      - name: Push report
         run: |
-          git config user.name  "Market Intel Bot"
+          git config user.name "Market Intel Bot"
           git config user.email "bot@marketintel.io"
+          git pull origin main
           git add docs/index.html
-          git diff --staged --quiet || git commit -m "📊 Daily report $(date +'%Y-%m-%d %H:%M UTC')"
-          git pull --rebase origin main
-          git push
+          git diff --staged --quiet || git commit -m "Daily report $(date +'%Y-%m-%d')"
+          git push origin main
