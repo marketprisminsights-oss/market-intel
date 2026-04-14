@@ -1,0 +1,53 @@
+name: Daily Market Analysis
+
+on:
+  schedule:
+    - cron: '0 12 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run analysis
+        env:
+          FRED_API_KEY:   ${{ secrets.FRED_API_KEY }}
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          OUTPUT_DIR:     ./docs
+        run: |
+          mkdir -p docs
+          python cycle_analysis.py --no-browser --outdir ./docs
+
+      - name: Rename output to index.html
+        run: |
+          cd docs
+          GENERATED=$(ls cycle_analysis_*.html 2>/dev/null | head -1)
+          if [ -n "$GENERATED" ]; then
+            mv "$GENERATED" index.html
+            echo "✓ Renamed $GENERATED to index.html"
+          else
+            echo "✗ No output file found"
+            exit 1
+          fi
+
+      - name: Commit and push report
+        run: |
+          git config user.name  "Market Intel Bot"
+          git config user.email "bot@marketintel.io"
+          git add docs/index.html
+          git diff --staged --quiet || git commit -m "📊 Daily report $(date +'%Y-%m-%d %H:%M UTC')"
+          git push
