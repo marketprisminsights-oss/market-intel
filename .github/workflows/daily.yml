@@ -48,11 +48,11 @@ jobs:
             echo "✗ No output file found"
             exit 1
           fi
-
-      - name: Commit and push report
+     - name: Commit and push report
         run: |
           git config user.name  "Market Intel Bot"
           git config user.email "bot@marketintel.io"
           git add docs/index.html
           git diff --staged --quiet || git commit -m "📊 Daily report $(date +'%Y-%m-%d %H:%M UTC')"
+          git pull --rebase origin main
           git push
