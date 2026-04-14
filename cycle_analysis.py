@@ -13744,22 +13744,165 @@ def build_html(fd, md, ep, pos, charts, gen_time, ai=None, scorecard=None, secto
     # ── Options Flow tab — GEX charts from Barchart CSVs ─────────────────────
     _options_tab_html = build_options_flow_tab(DOWNLOADS_DIR)
 
-    TAB_NAV = """
-<div id="tab-nav" style="display:flex;gap:4px;margin-bottom:18px;flex-wrap:wrap">
-  <button onclick="showTab('overview')"      class="tab-btn active" id="btn-overview">📊 Overview</button>
-  <button onclick="showTab('indcharts')"     class="tab-btn" id="btn-indcharts">📉 Indicator Charts</button>
-  <button onclick="showTab('parallel')"      class="tab-btn" id="btn-parallel">🔬 Parallel Table</button>
-  <button onclick="showTab('cycles')"        class="tab-btn" id="btn-cycles">🔄 Cycle Analysis</button>
-  <button onclick="showTab('bonds')"         class="tab-btn" id="btn-bonds">📉 Credit & Rates</button>
-  <button onclick="showTab('sectors')"       class="tab-btn" id="btn-sectors">🗂 Sector Rotation</button>
-  <button onclick="showTab('sectorstocks')"  class="tab-btn" id="btn-sectorstocks">📋 Sector Stocks</button>
-  <button onclick="showTab('leading')"       class="tab-btn" id="btn-leading">📡 Leading Indicators</button>
-  <button onclick="showTab('mktcharts')"     class="tab-btn" id="btn-mktcharts">🔬 Market Charts</button>
-  <button onclick="showTab('pullback')"      class="tab-btn" id="btn-pullback">📉 Drawdown Analysis</button>
-  <button onclick="showTab('ai-summary')"    class="tab-btn" id="btn-ai-summary">🤖 AI Summary</button>
-  <button onclick="showTab('ecocal')"        class="tab-btn" id="btn-ecocal">📅 Eco Calendar</button>
-  <button onclick="showTab('options')"       class="tab-btn" id="btn-options">⚡ Options Flow</button>
-</div>
+    TAB_NAV = f"""
+<!-- ═══ TOP NAVBAR ══════════════════════════════════════════════════════════ -->
+<nav id="mi-nav">
+
+  <!-- Logo -->
+  <a class="mi-logo" href="#" onclick="showTab('overview');return false">
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+      <polygon points="13,2 24,24 2,24" stroke="#00C8A0" stroke-width="1.5" fill="none"/>
+      <polyline points="5,20 11,12 16,16 21,7" stroke="#F5A020"
+                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="mi-logo-text">Market<span>Intel</span></span>
+  </a>
+
+  <!-- Macro dropdown -->
+  <div class="nav-group">
+    <button class="nav-group-btn">Macro <span class="nav-chevron">▾</span></button>
+    <div class="nav-dd">
+      <a class="nav-dd-item" href="#" onclick="showTab('overview');return false">
+        <div class="nav-dd-icon" style="background:rgba(0,200,160,.1)">📊</div>
+        <div><div class="nav-dd-label">Overview</div><div class="nav-dd-sub">62 indicators · scorecard</div></div>
+      </a>
+      <a class="nav-dd-item" href="#" onclick="showTab('indcharts');return false">
+        <div class="nav-dd-icon" style="background:rgba(59,130,246,.1)">📉</div>
+        <div><div class="nav-dd-label">Indicator Charts</div><div class="nav-dd-sub">Full history + SPX overlay</div></div>
+      </a>
+      <div class="nav-dd-sep"></div>
+      <a class="nav-dd-item" href="#" onclick="showTab('bonds');return false">
+        <div class="nav-dd-icon" style="background:rgba(255,77,109,.1)">💳</div>
+        <div><div class="nav-dd-label">Credit &amp; Rates</div><div class="nav-dd-sub">HY/IG spreads · yield curve</div></div>
+      </a>
+      <a class="nav-dd-item" href="#" onclick="showTab('mktcharts');return false">
+        <div class="nav-dd-icon" style="background:rgba(245,160,32,.1)">🔬</div>
+        <div><div class="nav-dd-label">Market Charts</div><div class="nav-dd-sub">Smart/Dumb money · gauges</div></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Cycles dropdown -->
+  <div class="nav-group">
+    <button class="nav-group-btn">Cycles <span class="nav-chevron">▾</span></button>
+    <div class="nav-dd">
+      <a class="nav-dd-item" href="#" onclick="showTab('cycles');return false">
+        <div class="nav-dd-icon" style="background:rgba(0,200,160,.1)">🔄</div>
+        <div><div class="nav-dd-label">Cycle Analysis</div><div class="nav-dd-sub">Kuznets · Juglar · Kitchin</div></div>
+      </a>
+      <a class="nav-dd-item" href="#" onclick="showTab('parallel');return false">
+        <div class="nav-dd-icon" style="background:rgba(139,164,190,.1)">🔬</div>
+        <div><div class="nav-dd-label">Parallel Table</div><div class="nav-dd-sub">8 crashes vs today</div></div>
+      </a>
+      <a class="nav-dd-item" href="#" onclick="showTab('leading');return false">
+        <div class="nav-dd-icon" style="background:rgba(245,160,32,.1)">📡</div>
+        <div><div class="nav-dd-label">Leading Indicators</div><div class="nav-dd-sub">Peak / trough scoring</div></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Markets dropdown -->
+  <div class="nav-group">
+    <button class="nav-group-btn">Markets <span class="nav-chevron">▾</span></button>
+    <div class="nav-dd">
+      <a class="nav-dd-item" href="#" onclick="showTab('sectors');return false">
+        <div class="nav-dd-icon" style="background:rgba(0,200,160,.1)">🗂</div>
+        <div><div class="nav-dd-label">Sector Rotation</div><div class="nav-dd-sub">ETF pair ratios</div></div>
+      </a>
+      <a class="nav-dd-item" href="#" onclick="showTab('sectorstocks');return false">
+        <div class="nav-dd-icon" style="background:rgba(59,130,246,.1)">📋</div>
+        <div><div class="nav-dd-label">Sector Stocks</div><div class="nav-dd-sub">Top 10 per sector</div></div>
+      </a>
+      <a class="nav-dd-item" href="#" onclick="showTab('pullback');return false">
+        <div class="nav-dd-icon" style="background:rgba(255,77,109,.1)">📉</div>
+        <div><div class="nav-dd-label">Drawdown Analysis</div><div class="nav-dd-sub">Pullback monitor · projections</div></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Calendar dropdown -->
+  <div class="nav-group">
+    <button class="nav-group-btn">Calendar <span class="nav-chevron">▾</span></button>
+    <div class="nav-dd">
+      <a class="nav-dd-item" href="#" onclick="showTab('ecocal');return false">
+        <div class="nav-dd-icon" style="background:rgba(245,160,32,.1)">📅</div>
+        <div><div class="nav-dd-label">Economic Calendar</div><div class="nav-dd-sub">This week's events</div></div>
+      </a>
+      <a class="nav-dd-item" href="#" onclick="showTab('options');return false">
+        <div class="nav-dd-icon" style="background:rgba(0,200,160,.1)">⚡</div>
+        <div><div class="nav-dd-label">Options Flow</div><div class="nav-dd-sub">GEX · dealer positioning</div></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- AI Summary direct link -->
+  <button class="nav-direct" onclick="showTab('ai-summary')">🤖 AI Summary</button>
+
+  <!-- Right side -->
+  <div class="nav-right">
+    <div class="nav-live">
+      <div class="live-dot"></div>
+      {_spy_price_str}
+    </div>
+    <span class="nav-timestamp">{gen_time}</span>
+  </div>
+
+</nav>
+
+<!-- ═══ SIDEBAR ═════════════════════════════════════════════════════════════ -->
+<aside id="mi-sidebar">
+
+  <div class="sb-label">Overview</div>
+  <button class="sb-item active" id="btn-overview"    onclick="showTab('overview')">
+    <span class="sb-icon">📊</span> Dashboard
+    <span class="sb-badge sb-danger">{_n_danger}</span>
+  </button>
+  <button class="sb-item" id="btn-indcharts"  onclick="showTab('indcharts')">
+    <span class="sb-icon">📉</span> Indicator Charts
+  </button>
+
+  <div class="sb-label">Cycle Analysis</div>
+  <button class="sb-item" id="btn-cycles"     onclick="showTab('cycles')">
+    <span class="sb-icon">🔄</span> Kuznets / Juglar
+  </button>
+  <button class="sb-item" id="btn-parallel"   onclick="showTab('parallel')">
+    <span class="sb-icon">🔬</span> Parallel Table
+  </button>
+  <button class="sb-item" id="btn-leading"    onclick="showTab('leading')">
+    <span class="sb-icon">📡</span> Leading Signals
+  </button>
+
+  <div class="sb-label">Credit &amp; Rates</div>
+  <button class="sb-item" id="btn-bonds"      onclick="showTab('bonds')">
+    <span class="sb-icon">📈</span> Credit &amp; Rates
+  </button>
+  <button class="sb-item" id="btn-mktcharts"  onclick="showTab('mktcharts')">
+    <span class="sb-icon">🔬</span> Market Charts
+  </button>
+
+  <div class="sb-label">Markets</div>
+  <button class="sb-item" id="btn-sectors"    onclick="showTab('sectors')">
+    <span class="sb-icon">🗂</span> Sector Rotation
+  </button>
+  <button class="sb-item" id="btn-sectorstocks" onclick="showTab('sectorstocks')">
+    <span class="sb-icon">📋</span> Sector Stocks
+  </button>
+  <button class="sb-item" id="btn-pullback"   onclick="showTab('pullback')">
+    <span class="sb-icon">📉</span> Drawdown Monitor
+  </button>
+
+  <div class="sb-label">Intelligence</div>
+  <button class="sb-item" id="btn-ai-summary" onclick="showTab('ai-summary')">
+    <span class="sb-icon">🤖</span> AI Summary
+  </button>
+  <button class="sb-item" id="btn-ecocal"     onclick="showTab('ecocal')">
+    <span class="sb-icon">📅</span> Eco Calendar
+  </button>
+  <button class="sb-item" id="btn-options"    onclick="showTab('options')">
+    <span class="sb-icon">⚡</span> Options Flow
+  </button>
+
+</aside>
 """
 
 
@@ -14018,84 +14161,451 @@ def build_html(fd, md, ep, pos, charts, gen_time, ai=None, scorecard=None, secto
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Deep Cycle Analysis — {gen_time}</title>
+<title>MarketIntel — {gen_time}</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root{{
+    --bg:       #080C12;
+    --surface:  #0E1420;
+    --surface2: #141C2A;
+    --border:   #1E2D42;
+    --border2:  #243348;
+    --teal:     #00C8A0;
+    --teal-dim: rgba(0,200,160,0.10);
+    --amber:    #F5A020;
+    --amber-dim:rgba(245,160,32,0.10);
+    --red:      #FF4D6D;
+    --red-dim:  rgba(255,77,109,0.10);
+    --text:     #E2EAF4;
+    --text2:    #8BA4BE;
+    --text3:    #4A6278;
+    --mono:     'JetBrains Mono',monospace;
+    --sans:     'DM Sans',sans-serif;
+    --serif:    'Instrument Serif',serif;
+    --nav-h:    54px;
+    --sb-w:     210px;
+    --status-h: 28px;
+  }}
+
   *{{box-sizing:border-box;margin:0;padding:0}}
 
-  /* ── GLOBAL MINIMUM BOLDNESS — all text at least semi-bold ────────────── */
+  /* ── GLOBAL FONT WEIGHT ─────────────────────────────────────────────────── */
   body,div,p,span,td,th,li,label,input,select,button,a,caption,
   h1,h2,h3,h4,h5,h6,small,em,strong,blockquote,figcaption{{
-    font-weight:600;
+    font-weight:500;
   }}
-  /* Preserve explicit weight overrides (800/900) — only lift light text */
   [style*="font-weight:4"],[style*="font-weight:3"],
   [style*="font-weight:normal"],[style*="font-weight:300"],
   [style*="font-weight:400"],
   [style*="font-weight: 4"],[style*="font-weight: 3"]{{
-    font-weight:600 !important;
+    font-weight:500 !important;
   }}
 
-  body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-       background:#f4f5f9;color:#1a1a2e;padding:18px;max-width:1700px;margin:0 auto}}
-  .section{{background:#ffffff;border:1px solid #dde1ed;border-radius:12px;
-            overflow:hidden;margin-bottom:16px}}
-  .sh{{padding:12px 18px;background:#f0f2f8;border-bottom:1px solid #dde1ed;
-       display:flex;align-items:center;justify-content:space-between}}
-  .sh h2{{font-size:13px;font-weight:800;color:#1a1a2e}}
-  .sh p{{font-size:10px;color:#556;margin-top:2px}}
+  /* ── BASE ───────────────────────────────────────────────────────────────── */
+  html{{ scroll-behavior:smooth; }}
+  body{{
+    font-family:var(--sans);
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+  }}
+
+  /* ── TOP NAVBAR ─────────────────────────────────────────────────────────── */
+  #mi-nav{{
+    position:fixed;top:0;left:0;right:0;z-index:200;
+    height:var(--nav-h);
+    background:rgba(8,12,18,0.92);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+    display:flex;align-items:center;
+    padding:0 20px;gap:4px;
+  }}
+  .mi-logo{{
+    display:flex;align-items:center;gap:9px;
+    margin-right:24px;text-decoration:none;flex-shrink:0;
+  }}
+  .mi-logo-text{{
+    font-family:var(--sans);font-size:14px;font-weight:700;
+    color:var(--text);letter-spacing:-.3px;
+  }}
+  .mi-logo-text span{{color:var(--teal)}}
+
+  /* Nav dropdown groups */
+  .nav-group{{position:relative;display:inline-block}}
+  .nav-group-btn{{
+    display:flex;align-items:center;gap:5px;
+    padding:6px 11px;border-radius:6px;
+    font-size:12px;font-weight:600;font-family:var(--sans);
+    color:var(--text2);cursor:pointer;
+    border:none;background:none;
+    transition:all .15s;white-space:nowrap;
+  }}
+  .nav-group-btn:hover{{color:var(--text);background:var(--surface2)}}
+  .nav-chevron{{font-size:8px;opacity:.5;transition:transform .2s}}
+  .nav-group:hover .nav-chevron{{transform:rotate(180deg)}}
+
+  /* Dropdown panel */
+  .nav-dd{{
+    position:absolute;top:calc(100% + 6px);left:0;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:10px;padding:5px;
+    min-width:210px;
+    box-shadow:0 24px 48px rgba(0,0,0,.7);
+    opacity:0;visibility:hidden;
+    transform:translateY(-6px);
+    transition:all .16s ease;z-index:300;
+  }}
+  .nav-group:hover .nav-dd{{
+    opacity:1;visibility:visible;transform:translateY(0);
+  }}
+  .nav-dd-item{{
+    display:flex;align-items:center;gap:9px;
+    padding:7px 9px;border-radius:6px;
+    font-size:11.5px;font-weight:500;
+    color:var(--text2);cursor:pointer;
+    transition:all .1s;text-decoration:none;
+  }}
+  .nav-dd-item:hover{{background:var(--surface2);color:var(--text)}}
+  .nav-dd-icon{{
+    width:26px;height:26px;border-radius:6px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:12px;
+  }}
+  .nav-dd-label{{font-weight:600;color:var(--text);font-size:11.5px}}
+  .nav-dd-sub{{color:var(--text3);font-size:9.5px;margin-top:1px}}
+  .nav-dd-sep{{height:1px;background:var(--border);margin:4px 0}}
+  .nav-direct{{
+    display:flex;align-items:center;gap:5px;
+    padding:6px 11px;border-radius:6px;
+    font-size:12px;font-weight:600;font-family:var(--sans);
+    color:var(--text2);cursor:pointer;
+    border:none;background:none;transition:all .15s;
+  }}
+  .nav-direct:hover{{color:var(--text);background:var(--surface2)}}
+
+  /* Right side nav items */
+  .nav-right{{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}}
+  .nav-live{{
+    display:flex;align-items:center;gap:6px;
+    font-family:var(--mono);font-size:10.5px;
+    color:var(--teal);font-weight:500;
+    padding:4px 10px;
+    background:var(--teal-dim);
+    border:1px solid rgba(0,200,160,.2);
+    border-radius:20px;white-space:nowrap;
+  }}
+  .live-dot{{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--teal);
+    animation:livepulse 2s infinite;
+  }}
+  @keyframes livepulse{{0%,100%{{opacity:1}}50%{{opacity:.25}}}}
+  .nav-timestamp{{
+    font-family:var(--mono);font-size:9.5px;color:var(--text3);
+  }}
+
+  /* ── SIDEBAR ─────────────────────────────────────────────────────────────── */
+  #mi-sidebar{{
+    position:fixed;
+    top:var(--nav-h);bottom:var(--status-h);
+    left:0;width:var(--sb-w);
+    background:var(--surface);
+    border-right:1px solid var(--border);
+    overflow-y:auto;overflow-x:hidden;
+    padding:14px 10px;
+    display:flex;flex-direction:column;gap:2px;
+    z-index:100;
+  }}
+  #mi-sidebar::-webkit-scrollbar{{width:3px}}
+  #mi-sidebar::-webkit-scrollbar-thumb{{background:var(--border2);border-radius:3px}}
+  .sb-label{{
+    font-size:8.5px;font-weight:700;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--text3);
+    padding:10px 8px 3px;margin-top:4px;
+  }}
+  .sb-label:first-child{{margin-top:0;padding-top:0}}
+  .sb-item{{
+    display:flex;align-items:center;gap:9px;
+    padding:7px 8px;border-radius:7px;
+    font-size:11.5px;font-weight:500;
+    color:var(--text2);cursor:pointer;
+    border:none;background:none;font-family:var(--sans);
+    transition:all .1s;text-align:left;width:100%;
+    position:relative;
+  }}
+  .sb-item:hover{{background:var(--surface2);color:var(--text)}}
+  .sb-item.active{{
+    background:var(--teal-dim);color:var(--teal);font-weight:600;
+  }}
+  .sb-item.active::before{{
+    content:'';position:absolute;left:0;top:5px;bottom:5px;
+    width:2.5px;background:var(--teal);border-radius:2px;
+  }}
+  .sb-icon{{font-size:13px;width:16px;text-align:center;flex-shrink:0}}
+  .sb-badge{{
+    margin-left:auto;font-size:8.5px;font-weight:700;
+    padding:2px 6px;border-radius:8px;
+    font-family:var(--mono);flex-shrink:0;
+  }}
+  .sb-danger{{background:var(--red-dim);color:var(--red)}}
+  .sb-warn{{background:var(--amber-dim);color:var(--amber)}}
+  .sb-ok{{background:var(--teal-dim);color:var(--teal)}}
+
+  /* ── MAIN CONTENT AREA ───────────────────────────────────────────────────── */
+  #mi-main{{
+    margin-left:var(--sb-w);
+    padding-top:calc(var(--nav-h) + 22px);
+    padding-bottom:calc(var(--status-h) + 22px);
+    padding-left:24px;padding-right:24px;
+    min-height:100vh;
+  }}
+
+  /* ── REGIME BANNER ──────────────────────────────────────────────────────── */
+  .regime-banner{{
+    background:linear-gradient(135deg,var(--surface),var(--surface2));
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 20px;
+    margin-bottom:18px;
+    display:flex;align-items:center;gap:0;
+    flex-wrap:wrap;
+    overflow:hidden;
+  }}
+  .rb-item{{
+    display:flex;flex-direction:column;gap:3px;
+    padding:0 20px;
+    border-right:1px solid var(--border);
+    flex-shrink:0;
+  }}
+  .rb-item:first-child{{padding-left:0}}
+  .rb-item:last-child{{border-right:none}}
+  .rb-label{{
+    font-size:8.5px;font-weight:700;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--text3);
+  }}
+  .rb-value{{font-family:var(--sans);font-size:15px;font-weight:700;}}
+  .rb-sub{{font-size:9.5px;color:var(--text3);font-weight:500}}
+
+  /* ── SIGNAL PILLS ────────────────────────────────────────────────────────── */
+  .signals-row{{
+    display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;
+  }}
+  .sig-pill{{
+    display:flex;align-items:center;gap:5px;
+    padding:5px 10px;border-radius:20px;
+    font-size:10.5px;font-weight:600;font-family:var(--sans);
+    border:1px solid transparent;cursor:default;
+    transition:transform .12s;
+  }}
+  .sig-pill:hover{{transform:translateY(-1px)}}
+  .sig-danger{{background:var(--red-dim);color:var(--red);border-color:rgba(255,77,109,.2)}}
+  .sig-warn{{background:var(--amber-dim);color:var(--amber);border-color:rgba(245,160,32,.2)}}
+  .sig-ok{{background:var(--teal-dim);color:var(--teal);border-color:rgba(0,200,160,.2)}}
+  .sig-dot{{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}}
+
+  /* ── KPI CARDS ───────────────────────────────────────────────────────────── */
+  .kpi-row{{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:10px;margin-bottom:18px;
+  }}
+  .kpi-card{{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:11px;padding:14px 16px;
+    position:relative;overflow:hidden;
+    transition:border-color .18s;
+  }}
+  .kpi-card:hover{{border-color:var(--border2)}}
+  .kpi-card::after{{
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    background:var(--kpi-c,var(--teal));opacity:.8;
+  }}
+  .kpi-label{{
+    font-size:8.5px;font-weight:700;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--text3);margin-bottom:7px;
+  }}
+  .kpi-value{{
+    font-family:var(--mono);font-size:21px;font-weight:500;
+    color:var(--kpi-c,var(--text));line-height:1;margin-bottom:5px;
+  }}
+  .kpi-unit{{font-size:12px;color:var(--text3)}}
+  .kpi-delta{{
+    font-family:var(--mono);font-size:9.5px;font-weight:500;
+  }}
+  .kd-up{{color:var(--red)}}
+  .kd-down{{color:var(--teal)}}
+  .kd-flat{{color:var(--text3)}}
+  .kpi-src{{font-size:8.5px;color:var(--text3);margin-top:4px}}
+
+  /* ── SECTION / CARD ──────────────────────────────────────────────────────── */
+  .section{{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:13px;overflow:hidden;margin-bottom:14px;
+  }}
+  .sh{{
+    padding:11px 16px;
+    background:var(--surface2);
+    border-bottom:1px solid var(--border);
+    display:flex;align-items:center;justify-content:space-between;
+  }}
+  .sh h2{{font-size:12px;font-weight:700;color:var(--text)}}
+  .sh p{{font-size:9.5px;color:var(--text3);margin-top:1px}}
+
+  /* ── TABLE ───────────────────────────────────────────────────────────────── */
   table{{border-collapse:collapse;width:100%}}
-  tr:hover td{{background:rgba(50,100,220,.04)!important}}
+  tr:hover td{{background:rgba(255,255,255,.02)!important}}
+  th{{
+    font-size:9px;font-weight:700;letter-spacing:.07em;
+    text-transform:uppercase;color:var(--text3);
+    padding:8px 12px;border-bottom:1px solid var(--border);
+    text-align:left;background:var(--surface2);
+  }}
+  td{{
+    padding:9px 12px;font-size:11.5px;font-weight:500;
+    border-bottom:1px solid rgba(30,45,66,.5);color:var(--text2);
+  }}
+  tr:last-child td{{border-bottom:none}}
+
+  /* ── MISC LAYOUT ─────────────────────────────────────────────────────────── */
   canvas{{max-height:unset}}
-  .ch-wrap{{padding:14px 18px}}
+  .ch-wrap{{padding:14px 16px}}
   .grid2{{display:grid;grid-template-columns:1fr 1fr;gap:14px}}
   .grid3{{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}}
 
-  /* Tab buttons */
-  .tab-btn{{
-    background:#f0f2f8;border:1px solid #d0d5e8;color:#666688;
-    padding:8px 16px;border-radius:8px;cursor:pointer;font-size:11px;
-    font-weight:700;font-family:inherit;transition:all .2s;
+  /* ── STATUS BAR ──────────────────────────────────────────────────────────── */
+  #mi-status{{
+    position:fixed;bottom:0;left:var(--sb-w);right:0;
+    height:var(--status-h);
+    background:var(--surface);border-top:1px solid var(--border);
+    display:flex;align-items:center;padding:0 20px;gap:20px;z-index:100;
   }}
-  .tab-btn:hover{{ background:#e8eaf8;color:#444466; }}
-  .tab-btn.active{{ background:#dce8ff;border-color:#2266ee;color:#1155cc; }}
+  .st-item{{
+    display:flex;align-items:center;gap:5px;
+    font-family:var(--mono);font-size:9px;color:var(--text3);font-weight:500;
+  }}
+  .st-dot{{width:5px;height:5px;border-radius:50%}}
+  .st-ok{{background:var(--teal)}}
+  .st-warn{{background:var(--amber)}}
+  .st-err{{background:var(--red)}}
 
-  /* Tab content */
-  .tab-content{{ display:none }}
-  .tab-content.active{{ display:block }}
+  /* ── TAB CONTENT (hidden/shown) ──────────────────────────────────────────── */
+  .tab-content{{display:none}}
+  .tab-content.active{{display:block}}
+
+  /* ── SCROLLBAR ───────────────────────────────────────────────────────────── */
+  ::-webkit-scrollbar{{width:5px;height:5px}}
+  ::-webkit-scrollbar-track{{background:var(--bg)}}
+  ::-webkit-scrollbar-thumb{{background:var(--border2);border-radius:3px}}
+  ::-webkit-scrollbar-thumb:hover{{background:var(--text3)}}
+
+  /* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
+  @media(max-width:900px){{
+    #mi-sidebar{{display:none}}
+    #mi-main{{margin-left:0}}
+    #mi-status{{left:0}}
+  }}
+
+  /* ── OLD LIGHT-THEME OVERRIDES (keep existing content readable) ──────────── */
+  /* Section headers already use --surface2 above */
+  /* Any inline light backgrounds in content get softened */
+  [style*="background:#f0f2f8"],
+  [style*="background:#f4f5f9"],
+  [style*="background:#ffffff"],
+  [style*="background:#fff"]{{
+    background:var(--surface2) !important;
+  }}
+  [style*="background:#f0f8f2"],
+  [style*="background:#f4faf6"],
+  [style*="background:#e8f8ee"]{{
+    background:rgba(0,200,160,.06) !important;
+  }}
+  [style*="color:#1a1a2e"],
+  [style*="color:#1a2a3e"],
+  [style*="color:#334"],
+  [style*="color:#333"]{{
+    color:var(--text) !important;
+  }}
+  [style*="color:#556"],
+  [style*="color:#667"],
+  [style*="color:#778"]{{
+    color:var(--text2) !important;
+  }}
+  [style*="border-color:#dde1ed"],
+  [style*="border:#dde1ed"]{{
+    border-color:var(--border) !important;
+  }}
 </style>
 </head>
 <body>
 
-<!-- ═══ HEADER ═══════════════════════════════════════════════════════════════ -->
+{TAB_NAV}
+
+<!-- ═══ MAIN CONTENT ════════════════════════════════════════════════════════ -->
+<div id="mi-main">
+
+<!-- ── PAGE HEADER ────────────────────────────────────────────────────────── -->
 <div style="margin-bottom:16px;display:flex;align-items:flex-start;
-            justify-content:space-between;flex-wrap:wrap;gap:12px">
+            justify-content:space-between;flex-wrap:wrap;gap:10px">
   <div>
-    <div style="font-size:26px;font-weight:900;color:#1a1a2e;letter-spacing:-1px">
-      Deep Economic Cycle Analysis
+    <div style="font-size:9px;font-weight:700;letter-spacing:.12em;
+                text-transform:uppercase;color:var(--teal);margin-bottom:5px">
+      Macro Intelligence Platform
     </div>
-    <div style="font-size:11px;color:#667;margin-top:4px">
-      FRED ({fred_count} series) + yfinance ({mkt_count} tickers) · {gen_time}
-      &nbsp;·&nbsp;
-      <span style="color:{'#1A7A4A' if fred_count>=15 else '#D4820A'}">
+    <div style="font-family:var(--serif);font-size:26px;font-weight:400;
+                color:var(--text);line-height:1.15">
+      Market <em style="color:var(--teal);font-style:italic">Overview</em>
+    </div>
+    <div style="font-size:10px;color:var(--text3);margin-top:5px;font-weight:500">
+      FRED ({fred_count} series) + yfinance ({mkt_count} tickers) &nbsp;·&nbsp;
+      <span style="color:{'var(--teal)' if fred_count>=15 else 'var(--amber)'}">
         {'✓ All FRED series loaded' if fred_count>=15 else f'⚠ {fred_count} series loaded'}
       </span>
     </div>
   </div>
-  <div style="background:#f0f2f8;border:2px solid {rg['col']};border-radius:12px;
-              padding:12px 20px;text-align:center">
-    <div style="font-size:9px;color:#556;text-transform:uppercase;letter-spacing:.08em">Regime</div>
-    <div style="font-size:16px;font-weight:900;color:{rg['col']};margin-top:2px">{rg['label']}</div>
-    <div style="font-size:10px;color:#556;margin-top:3px">
-      Health: <strong style="color:{_sc_risk_col}">{_health_pct}%</strong> ·
-      {_n_danger}🔴 {_n_caution}🟡 {_n_calm}🟢
-    </div>
-  </div>
 </div>
 
-{TAB_NAV}
+<!-- ── REGIME BANNER ──────────────────────────────────────────────────────── -->
+<div class="regime-banner">
+  <div class="rb-item">
+    <div class="rb-label">Cycle Regime</div>
+    <div class="rb-value" style="color:{rg['col']}">{rg['label']}</div>
+    <div class="rb-sub">
+      Health: <strong style="color:{_sc_risk_col}">{_health_pct}%</strong>
+      &nbsp;·&nbsp; {_n_danger}🔴 {_n_caution}🟡 {_n_calm}🟢
+    </div>
+  </div>
+  <div class="rb-item">
+    <div class="rb-label">Kuznets</div>
+    <div class="rb-value" style="color:{k['col']}">{k['phase']}</div>
+    <div class="rb-sub">{k['pct']:.0f}% · peak ~{pos['kuznets']['peak']}</div>
+  </div>
+  <div class="rb-item">
+    <div class="rb-label">Juglar</div>
+    <div class="rb-value" style="color:{j['col']}">{j['phase']}</div>
+    <div class="rb-sub">{j['pct']:.0f}% · peak ~{pos['juglar']['peak']}</div>
+  </div>
+  <div class="rb-item">
+    <div class="rb-label">Kitchin</div>
+    <div class="rb-value" style="color:{ki['col']}">{ki['phase']}</div>
+    <div class="rb-sub">{ki['pct']:.0f}% · peak ~{pos['kitchin']['peak']}</div>
+  </div>
+  <div class="rb-item">
+    <div class="rb-label">SPY from ATH</div>
+    <div class="rb-value" style="color:{'var(--red)' if _spy_dd_pct<-10 else 'var(--amber)' if _spy_dd_pct<-3 else 'var(--teal)'}">{_spy_dd_str}</div>
+    <div class="rb-sub">{_current_dd_level}</div>
+  </div>
+  <div class="rb-item">
+    <div class="rb-label">Risk Level</div>
+    <div class="rb-value" style="color:{_sc_risk_col};font-size:12px">{_sc_risk}</div>
+    <div class="rb-sub">{_n_danger} critical signals</div>
+  </div>
+</div>
 
 <!-- ════════════════════════════════════════════════════════════════════════════
      TAB 1: OVERVIEW
@@ -14756,28 +15266,6 @@ def build_html(fd, md, ep, pos, charts, gen_time, ai=None, scorecard=None, secto
      CHARTS JAVASCRIPT (all charts rendered regardless of active tab)
 ════════════════════════════════════════════════════════════════════════════ -->
 <script>
-// ── Tab switching ─────────────────────────────────────────────────────────────
-function showTab(id) {{
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  document.getElementById('btn-' + id).classList.add('active');
-  // Lazy-init SPY projection chart when AI Summary tab opens
-  if (id === 'ai-summary') {{
-    setTimeout(() => {{
-      if (typeof buildSpyChart === 'function') buildSpyChart();
-    }}, 100);
-  }}
-  // Lazy-init Options Flow GEX charts on first open
-  if (id === 'options') {{
-    setTimeout(() => {{
-      if (typeof initGexCharts === 'function') initGexCharts();
-    }}, 50);
-  }}
-  // Re-trigger chart resize on tab switch
-  setTimeout(() => {{ Chart.instances.forEach(c => c && c.resize && c.resize()); }}, 120);
-}}
-
 // Auto-open a specific tab on load if --only was used
 window.addEventListener('load', function() {{
   var defaultTab = '{default_tab or ""}';
@@ -14786,13 +15274,13 @@ window.addEventListener('load', function() {{
   }}
 }});
 
-const gridColor = 'rgba(180,190,220,0.5)';
+const gridColor = 'rgba(30,45,66,0.8)';
 const baseOpts = {{
   responsive:true, maintainAspectRatio:true,
-  plugins:{{ legend:{{ labels:{{ color:'#9999cc', font:{{size:10}} }} }} }},
+  plugins:{{ legend:{{ labels:{{ color:'#8BA4BE', font:{{size:10}} }} }} }},
   scales:{{
-    x:{{ ticks:{{color:'#3355aa',font:{{size:9}},maxTicksLimit:10}}, grid:{{color:gridColor}} }},
-    y:{{ ticks:{{color:'#2244aa',font:{{size:9}}}}, grid:{{color:gridColor}} }},
+    x:{{ ticks:{{color:'#4A6278',font:{{size:9}},maxTicksLimit:10}}, grid:{{color:gridColor}} }},
+    y:{{ ticks:{{color:'#4A6278',font:{{size:9}}}}, grid:{{color:gridColor}} }},
   }}
 }};
 
@@ -15664,6 +16152,58 @@ buildOverlayChart('kitchin_overlay_chart',{_kitchin_json},{_kitchin_today_month}
 <div id="tab-options" class="tab-content">
 {_options_tab_html}
 </div>
+
+</div><!-- /#mi-main -->
+
+<!-- ═══ STATUS BAR ══════════════════════════════════════════════════════════ -->
+<div id="mi-status">
+  <div class="st-item">
+    <div class="st-dot {'st-ok' if fred_count>=15 else 'st-warn'}"></div>
+    FRED {fred_count}/{fred_count} series
+  </div>
+  <div class="st-item">
+    <div class="st-dot st-ok"></div>
+    yfinance {mkt_count} tickers
+  </div>
+  <div class="st-item">
+    <div class="st-dot {'st-ok' if CLAUDE_API_KEY else 'st-warn'}"></div>
+    {'Claude AI connected' if CLAUDE_API_KEY else 'Claude AI offline'}
+  </div>
+  <div class="st-item">
+    <div class="st-dot st-ok"></div>
+    {gen_time}
+  </div>
+  <div style="margin-left:auto" class="st-item">
+    <div class="st-dot st-ok"></div>
+    Decoding markets through Macro · Liquidity · Positioning
+  </div>
+</div>
+
+<script>
+// ── Updated Tab switching — handles sidebar + nav active states ─────────────
+function showTab(id) {{
+  // Hide all content
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  // Deactivate all sidebar items
+  document.querySelectorAll('.sb-item').forEach(el => el.classList.remove('active'));
+  // Show selected content
+  var content = document.getElementById('tab-' + id);
+  if (content) content.classList.add('active');
+  // Activate sidebar item
+  var btn = document.getElementById('btn-' + id);
+  if (btn) btn.classList.add('active');
+  // Lazy-init SPY projection chart when AI Summary tab opens
+  if (id === 'ai-summary') {{
+    setTimeout(() => {{ if (typeof buildSpyChart === 'function') buildSpyChart(); }}, 100);
+  }}
+  // Lazy-init Options Flow GEX charts on first open
+  if (id === 'options') {{
+    setTimeout(() => {{ if (typeof initGexCharts === 'function') initGexCharts(); }}, 50);
+  }}
+  // Re-trigger chart resize on tab switch
+  setTimeout(() => {{ Chart.instances.forEach(c => c && c.resize && c.resize()); }}, 120);
+}}
+</script>
 
 </body>
 </html>"""
